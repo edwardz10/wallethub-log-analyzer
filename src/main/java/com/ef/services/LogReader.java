@@ -1,6 +1,9 @@
 package com.ef.services;
 
+import com.ef.Parser;
 import com.ef.model.LogEntry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -9,6 +12,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 public class LogReader {
+    private static Log LOG = LogFactory.getLog(LogReader.class);
 
     private String path;
     private BufferedReader bufferedReader;
@@ -35,7 +39,7 @@ public class LogReader {
             try {
                 bufferedReader.close();
             } catch (IOException ioe2) {
-                System.err.println("Failed to close " + path + ": " + ioe2.getMessage());
+                LOG.error("Failed to close " + path + ": " + ioe2.getMessage());
             }
         } finally {
             return logEntry;
