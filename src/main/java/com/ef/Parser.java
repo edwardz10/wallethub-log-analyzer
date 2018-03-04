@@ -15,6 +15,9 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Main application class.
+ */
 public class Parser {
     private static Log LOG = LogFactory.getLog(Parser.class);
 

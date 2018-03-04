@@ -2,6 +2,10 @@ package com.ef.model;
 
 import java.util.Date;
 
+/**
+ * Entity that represents a
+ * line in the log file
+ */
 public class LogEntry {
 
     private Date date;

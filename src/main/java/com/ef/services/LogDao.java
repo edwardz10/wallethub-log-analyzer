@@ -10,6 +10,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides DB operations with
+ * LogEntry entities.
+ */
 public class LogDao {
     private static Log LOG = LogFactory.getLog(LogDao.class);
 
@@ -20,6 +24,12 @@ public class LogDao {
         connection = DriverManager.getConnection(connectionUrl, user, password);
     }
 
+    /**
+     * Adds a single LogEntry entity
+     * to the database.
+     * @param entry
+     * @throws SQLException
+     */
     public void addSingleEntry(LogEntry entry) throws SQLException {
         PreparedStatement ps = connection.prepareStatement(Constants.INSERT_LOG_ENTRY_QUERY);
         ps.setTimestamp(1, new java.sql.Timestamp(entry.getDate().getTime()));
@@ -30,6 +40,12 @@ public class LogDao {
         ps.executeUpdate();
     }
 
+    /**
+     * Addd a bulk of LogEntry entities to
+     * the DB to speed up the performance.
+     * @param entries
+     * @throws SQLException
+     */
     public void addEntriesBulk(List<LogEntry> entries) throws SQLException {
         PreparedStatement ps = connection.prepareStatement(Constants.INSERT_LOG_ENTRY_QUERY);
         connection.setAutoCommit(false);
@@ -47,11 +63,24 @@ public class LogDao {
         connection.commit();
     }
 
+    /**
+     * Clears up the 'log_entities' table
+     * @throws SQLException
+     */
     public void deleteAll() throws SQLException {
         Statement stmt = connection.createStatement();
         stmt.executeUpdate("delete from log_entries");
     }
 
+    /**
+     * Executes the SQL query that returns
+     * IP address statistics from the DB table
+     * @param startDate
+     * @param hourly
+     * @param threshold
+     * @return list of LogEntry objects
+     * @throws SQLException
+     */
     public List<IpStatistics> getIpExceedingThreshold(java.util.Date startDate, boolean hourly, int threshold) throws SQLException {
         List<IpStatistics> ipStatistics = new ArrayList<>();
         PreparedStatement ps = connection.prepareStatement(Constants.GET_IP_ADDRESSES_QUERY);
@@ -68,6 +97,13 @@ public class LogDao {
         return ipStatistics;
     }
 
+    /**
+     * Calculates end date by
+     * start date and duration
+     * @param startDate
+     * @param hourly
+     * @return
+     */
     protected java.util.Date getEndDate(final java.util.Date startDate, boolean hourly) {
         if (hourly) {
             return new java.util.Date(startDate.getTime() + 1000*(60*60 - 1));

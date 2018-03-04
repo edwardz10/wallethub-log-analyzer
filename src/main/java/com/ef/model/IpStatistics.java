@@ -1,5 +1,9 @@
 package com.ef.model;
 
+/**
+ * Entity that represents statistics
+ * of requests from an IP address
+ */
 public class IpStatistics {
 
     private String ipAddress;

@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * Parses application.properties file
+ */
 public class ApplicationProperties {
 
     private Properties properties = new Properties();

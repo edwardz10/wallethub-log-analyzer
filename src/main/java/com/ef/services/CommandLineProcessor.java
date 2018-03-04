@@ -5,10 +5,27 @@ import org.apache.commons.cli.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Parses and validates command-line parameters
+ * utilizing 'commons-cli' library's API.
+ */
 public class CommandLineProcessor {
 
+    /**
+     * Simple date formatter for parsing
+     * the "startDate" CLI parameter
+     */
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd.HH:mm:ss");
+
     private String[] args;
+
+    /**
+     * Command line parameters:
+     *   - accesslog;
+     *   - startDate;
+     *   - duration;
+     *   - threshold;
+     */
     private String accessLog;
     private Date startDate;
     private String duration;
