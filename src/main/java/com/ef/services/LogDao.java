@@ -15,9 +15,9 @@ public class LogDao {
 
     private Connection connection;
 
-    public LogDao() throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.jdbc.Driver");
-        connection = DriverManager.getConnection(Constants.DB_CONNECTION_URL, Constants.DB_USER, Constants.DB_PWD);
+    public LogDao(String jdbcDriver, String connectionUrl, String user, String password) throws ClassNotFoundException, SQLException {
+        Class.forName(jdbcDriver);
+        connection = DriverManager.getConnection(connectionUrl, user, password);
     }
 
     public void addSingleEntry(LogEntry entry) throws SQLException {

@@ -1,10 +1,6 @@
 package com.ef.util;
 
 public interface Constants {
-    static String DB_CONNECTION_URL = "jdbc:mysql://localhost:3306/wallethub?autoReconnect=true&useSSL=false";
-    static String DB_USER = "root";
-    static String DB_PWD = "starlight";
-
     static String INSERT_LOG_ENTRY_QUERY =
             "insert into log_entries(start_date, ip_address, http_request, response_code, browser) values(?, ?, ?, ?, ?)";
 
