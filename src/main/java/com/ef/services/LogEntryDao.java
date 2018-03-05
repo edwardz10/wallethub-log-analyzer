@@ -14,14 +14,13 @@ import java.util.List;
  * Provides DB operations with
  * LogEntry entities.
  */
-public class LogDao {
-    private static Log LOG = LogFactory.getLog(LogDao.class);
+public class LogEntryDao {
+    private static Log LOG = LogFactory.getLog(LogEntryDao.class);
 
     private Connection connection;
 
-    public LogDao(String jdbcDriver, String connectionUrl, String user, String password) throws ClassNotFoundException, SQLException {
-        Class.forName(jdbcDriver);
-        connection = DriverManager.getConnection(connectionUrl, user, password);
+    public LogEntryDao(Connection connection) {
+        this.connection = connection;
     }
 
     /**
@@ -61,6 +60,7 @@ public class LogDao {
 
         ps.executeBatch();
         connection.commit();
+        connection.setAutoCommit(true);
     }
 
     /**
@@ -110,5 +110,14 @@ public class LogDao {
         } else {
             return new java.util.Date(startDate.getTime() + 1000*(60*60*24 - 1));
         }
+    }
+
+    public void replaceIpStatisticsEntry(IpStatistics ipStatistics) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement(Constants.INSERT_IP_STATISTICS_QUERY);
+        ps.setString(1, ipStatistics.getIpAddress());
+        ps.setInt(2, ipStatistics.getCount());
+//        ps.setInt(3, ipStatistics.getCount());
+        System.out.println(ps.toString());
+        ps.executeUpdate();
     }
 }

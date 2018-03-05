@@ -2,15 +2,14 @@ package com.ef;
 
 import com.ef.model.IpStatistics;
 import com.ef.model.LogEntry;
-import com.ef.services.ApplicationProperties;
-import com.ef.services.CommandLineProcessor;
-import com.ef.services.LogDao;
-import com.ef.services.LogReader;
+import com.ef.services.*;
 import org.apache.commons.cli.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,11 +29,14 @@ public class Parser {
             CommandLineProcessor commandLineProcessor = new CommandLineProcessor(args);
 
             LOG.info("Initialize DB connection...");
-            LogDao logDao = new LogDao(
-                    applicationProperties.getProperty("mysql.jdbc.driver"),
+            Class.forName(applicationProperties.getProperty("mysql.jdbc.driver"));
+            Connection connection = DriverManager.getConnection(
                     applicationProperties.getProperty("mysql.connection.url"),
                     applicationProperties.getProperty("mysql.user"),
                     applicationProperties.getProperty("mysql.password"));
+
+            LogEntryDao logDao = new LogEntryDao(connection);
+            IpStatisticsDao ipStatisticsDao = new IpStatisticsDao(connection);
 
             LOG.info("Clear 'log_entities' table...");
             logDao.deleteAll();
@@ -65,8 +67,25 @@ public class Parser {
                     (commandLineProcessor.getDuration().equals("hourly")),
                     commandLineProcessor.getThreshold());
 
+            LOG.info("Save IP address statistics into the database...");
             for (IpStatistics ipStat : ipStatistics) {
                 System.out.println(ipStat);
+
+                /**
+                 * For each IpStatistics entity:
+                 * 1. Check, whether a record with
+                 * the same IP address exists.
+                 * 2. If not, then insert a new IpStatistics entity.
+                 * 3. If yes, then update the existing entity
+                 * with a new 'count' field.
+                 */
+                int countStatistics = ipStatisticsDao.getCountWithIpAddress(ipStat);
+
+                if (countStatistics == 0) {
+                    ipStatisticsDao.addIpStatistics(ipStat);
+                } else {
+                    ipStatisticsDao.updateIpStatistics(ipStat);
+                }
             }
 
         } catch( ParseException pe ) {
